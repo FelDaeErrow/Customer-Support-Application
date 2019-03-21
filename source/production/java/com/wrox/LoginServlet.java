@@ -1,5 +1,12 @@
-package com.wrox;
+/*
+ * Name: Kortni Jackson
+ * Date: 3/21/19
+ * 
+ */
 
+package com.wrox;
+// Import SQL stuff for java
+import java.sql.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,10 +27,31 @@ public class LoginServlet extends HttpServlet
     private static final Map<String, String> userDatabase = new Hashtable<>();
 
     static {
-        userDatabase.put("Nicholas", "password");
-        userDatabase.put("Sarah", "drowssap");
-        userDatabase.put("Mike", "wordpass");
-        userDatabase.put("John", "green");
+    	// Commented out the previous hardcoded usernames and passwords
+        //userDatabase.put("Nicholas", "password");
+        //userDatabase.put("Sarah", "drowssap");
+        //userDatabase.put("Mike", "wordpass");
+        //userDatabase.put("John", "green");
+        
+        try {
+        	// Says this line is deprecated and unnecessary
+        	Class.forName("com.mysql.jdbc.Driver");
+        	// database name is customersupport; username is root; password is password
+			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/customersupport","root","password");
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery("select * from user");
+			
+			// Loop through the database lines
+			while(rs.next()){
+				// Use the 2nd string (email) as a username, use the 5th string (password) as the password
+				userDatabase.put(rs.getString(2), rs.getString(5));
+			}
+			
+			con.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     @Override
